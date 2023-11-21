@@ -212,6 +212,7 @@ int main(int argc, char* argv[])
             int month;
 
             cin >> month;
+            passedMonths += month;
         }
 
         else if(command == "inventory_report"){
