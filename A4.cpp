@@ -27,11 +27,11 @@ class User
 
     public: 
 
-        int getId(){
+        const int getId(){
             return user_id;
         }
 
-        int getWallet(){
+        const int getWallet(){
             return wallet;
         }
 
@@ -48,6 +48,10 @@ class User
             wallet = stoi(seperatedData[1]);
         }
 
+        User() {
+            user_id = -1;
+            wallet = -1;
+        }
 
 };
 
@@ -69,13 +73,16 @@ class Short_term
     }
 };
 
-const User& getUser(int user_id, vector<User>& users) {
-    for(User& u : users){
+User& getUser(int user_id, vector<User>& users) {
+    for(User& u : users) {
         if(u.getId() == user_id)
             return u;
     }
+
+    return users[0];
 }
 
+// fix bank ID
 class Bank
 {
 private:
@@ -86,6 +93,10 @@ private:
     vector<Short_term> shortTerm;
 
 public:
+    Bank() {
+        bank_id = -1;
+    }
+
     Bank(string data){
         vector<string> seperatedData = split(data, ',');
         bank_id = stoi(seperatedData[0]);
@@ -162,6 +173,9 @@ int main(int argc, char* argv[])
     int passedMonths = 0;
     vector<Bank> banks;
     vector<User> users;
+    users.push_back(User());
+    banks.push_back(Bank());
+
     readBankFile(argv[2], banks);
     readUserFile(argv[4], users);
     // banks[0].print();
