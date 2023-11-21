@@ -18,6 +18,29 @@ vector<string> split(string s, char seperator) {
     return res;
 }
 
+class Long_term
+{
+    private:
+
+        int user_id;
+        int year;
+        int short_term_id;
+        int money;
+        int startMonth;
+
+    public:
+
+    double calculateMoney(int monthNow, double margin) {
+        margin /= 100;
+        // margin /= 12;
+        return margin * (monthNow - startMonth) * money + money;
+    }
+
+    int getUserID() {
+        return user_id;
+    }
+};
+
 class User
 {
     private:
@@ -77,7 +100,8 @@ class Short_term
     }
 
     double calculateMoney(int monthNow, double margin) {
-        return pow(margin, monthNow - startMonth) * money + money;
+        margin /= 100;
+        return margin * (monthNow - startMonth) * money + money;
     }
 };
 
@@ -99,13 +123,24 @@ private:
     int bank_id;
     int short_term_profit_margin;
     int short_term_min_inv;
+    int long_term_profit_margin;
     vector<Short_term> shortTerm;
+    vector<Long_term> longTerm;
 
 public:
     double getUserMoney(int userID, int monthNow) {
         for (Short_term s : shortTerm) {
             if (s.getUserID() == userID)
                 return s.calculateMoney(monthNow, short_term_profit_margin);
+        }
+
+        return 0;
+    }
+
+    double getUserLongTermMoney(int userID, int monthNow) {
+        for (Long_term s : longTerm) {
+            if (s.getUserID() == userID)
+                return s.calculateMoney(monthNow, long_term_profit_margin);
         }
 
         return 0;
@@ -138,19 +173,7 @@ public:
     
 };
 
-class Long_term
-{
-    private:
 
-        int user_id;
-        int year;
-        int short_term_id;
-        int money;
-        int startMonth;
-
-    public:
-
-};
 
 void readBankFile(string fileName, vector<Bank>& banks){
     string line;
@@ -239,6 +262,10 @@ int main(int argc, char* argv[])
             int short_term_deposit_id;
 
             cin >> userId >> bankId >> short_term_deposit_id;
+            double sum = banks[bankId].getUserMoney(userId, passedMonths);
+            sum += banks[bankId].getUserLongTermMoney(userId, passedMonths);
+
+            cout << setprecision(2) << fixed << sum << endl;
         }
 
         else if(command == "calc_money_in_bank"){
@@ -253,6 +280,13 @@ int main(int argc, char* argv[])
             int userId;
 
             cin >> userId;
+
+            double sum = 0;
+            for (Bank b : banks) {
+                sum += b.getUserMoney(userId, passedMonths);
+            }
+
+            cout << setprecision(2) << fixed << sum << endl;
         }
 
         else {
