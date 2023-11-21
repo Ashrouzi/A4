@@ -71,7 +71,16 @@ class Short_term
         startMonth = start;
         index = i;
     }
+
+    int getUserID() {
+        return user_id;
+    }
+
+    double calculateMoney(int monthNow, double margin) {
+        return pow(margin, monthNow - startMonth) * money + money;
+    }
 };
+
 
 User& getUser(int user_id, vector<User>& users) {
     for(User& u : users) {
@@ -93,6 +102,15 @@ private:
     vector<Short_term> shortTerm;
 
 public:
+    double getUserMoney(int userID, int monthNow) {
+        for (Short_term s : shortTerm) {
+            if (s.getUserID() == userID)
+                return s.calculateMoney(monthNow, short_term_profit_margin);
+        }
+
+        return 0;
+    }
+
     Bank() {
         bank_id = -1;
     }
@@ -228,6 +246,7 @@ int main(int argc, char* argv[])
             int bankId;
 
             cin >> userId >> bankId;
+            cout << setprecision(2) << fixed << banks[bankId].getUserMoney(userId, passedMonths) << endl;
         }
 
         else if(command == "calc_all_money"){
